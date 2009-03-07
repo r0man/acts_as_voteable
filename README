@@ -8,9 +8,10 @@ See: http://www.juixe.com/techknow/index.php/2006/06/24/acts-as-voteable-rails-p
 
 == Resources
 
-Install
+Install:
+
  * Run the following command:
- script/plugin install http://juixe.com/svn/acts_as_voteable
+ script/plugin install git://github.com/r0man/acts_as_voteable.git
 
  * Create a new rails migration and add the following self.up and self.down methods
 
