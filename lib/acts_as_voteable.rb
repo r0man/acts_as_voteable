@@ -73,7 +73,7 @@ module Juixe
         protected
 
         def build_vote(voting, user = nil)
-          votes.build(:vote => voting, :user => user)
+          votes.build(:vote => normalize_voting(voting), :user => user)
         end
 
         def create_vote(voting, user = nil)
@@ -82,12 +82,16 @@ module Juixe
           vote
         end
 
+        def normalize_voting(voting)
+          ["true", "for", "1"].include?(voting.to_s)
+        end
+
         def delete_previous_votes(user)
-          Vote.delete_all(["voteable_type = ? AND voteable_id = ? AND user_id = ?", self.class.base_class, self.id, user.id]) unless user.blank?
+          ::Vote.delete_all(["voteable_type = ? AND voteable_id = ? AND user_id = ?", self.class.to_s, self.id, user.id]) unless user.blank?
         end
 
         def total_votes_conditions(vote)
-          ["voteable_id = ? AND voteable_type = ? AND vote = ?", id, self.class.base_class, vote]
+          ["voteable_id = ? AND voteable_type = ? AND vote = ?", id, self.class.to_s, vote]
         end
 
       end
