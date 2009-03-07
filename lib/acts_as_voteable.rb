@@ -77,17 +77,17 @@ module Juixe
         end
 
         def create_vote(voting, user = nil)
-          vote = build_vote(vote, user)
+          vote = build_vote(voting, user)
           vote.save
           vote
         end
 
         def delete_previous_votes(user)
-          Vote.delete_all(["voteable_type = ? AND voteable_id = ? AND user_id = ?", self.type.name, self.id, user.id]) unless user.blank?
+          Vote.delete_all(["voteable_type = ? AND voteable_id = ? AND user_id = ?", self.class.base_class, self.id, user.id]) unless user.blank?
         end
 
         def total_votes_conditions(vote)
-          ["voteable_id = ? AND voteable_type = ? AND vote = ?", id, self.type.name, vote]
+          ["voteable_id = ? AND voteable_type = ? AND vote = ?", id, self.class.base_class, vote]
         end
 
       end
