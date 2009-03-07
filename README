@@ -4,7 +4,7 @@ Acts As Voteable
 Allows users to vote on models. This is a fork from the original
 plugin developed by Juixe Software. The API changed slightly!
 
-See: http://juixe.com/svn/acts_as_voteable
+See: http://www.juixe.com/techknow/index.php/2006/06/24/acts-as-voteable-rails-plugin
 
 == Resources
 
