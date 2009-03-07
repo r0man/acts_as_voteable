@@ -1,16 +1,19 @@
-ActsAsVoteable
-==============
+Acts As Voteable
+================
 
-Allows user to vote on the on models.
+Allows users to vote on models. This is a fork from the original
+plugin developed by Juixe Software. The API changed slightly!
+
+See: http://juixe.com/svn/acts_as_voteable
 
 == Resources
 
 Install
  * Run the following command:
  script/plugin install http://juixe.com/svn/acts_as_voteable
- 
+
  * Create a new rails migration and add the following self.up and self.down methods
- 
+
   def self.up
     create_table "votes", :force => true do |t|
       t.column "vote", :boolean, :default => false
@@ -19,21 +22,21 @@ Install
       t.column "voteable_id", :integer, :default => 0, :null => false
       t.column "user_id", :integer, :default => 0, :null => false
     end
-  
+
     add_index "votes", ["user_id"], :name => "fk_votes_user"
   end
 
   def self.down
     drop_table :votes
   end
- 
+
 == Usage
 
- 
+
  * Make you ActiveRecord model act as voteable.
- 
+
  class Model < ActiveRecord::Base
- 	acts_as_voteable
+        acts_as_voteable
  end
 
 == Credits
