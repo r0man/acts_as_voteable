@@ -1,0 +1,21 @@
+sqlite:
+  :adapter: sqlite
+  :dbfile: vendor/plugins/acts_as_voteable/test/acts_as_voteable.sqlite.db
+
+sqlite3:
+  :adapter: sqlite3
+  :dbfile: vendor/plugins/acts_as_voteable/test/acts_as_voteable.sqlite3.db
+
+postgresql:
+  :adapter: postgresql
+  :username: postgres
+  :password: postgres
+  :database: acts_as_voteable_test
+  :min_messages: ERROR
+
+mysql:
+  :adapter: mysql
+  :host: localhost
+  :username: root
+  :password: password
+  :database: acts_as_voteable_test

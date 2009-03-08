@@ -9,15 +9,14 @@ module Juixe
 
       module ClassMethods
 
-        def acts_as_voteable
-          has_many :votes, :as => :voteable, :dependent => :destroy
+        def acts_as_voteable(options = { })
+          has_many :votes, :as => :voteable, :dependent => options[:dependent] || :delete_all
           include Juixe::Acts::Voteable::InstanceMethods
           extend Juixe::Acts::Voteable::SingletonMethods
         end
 
       end
 
-      # This module contains class methods
       module SingletonMethods
 
         def find_votes_cast_by_user(user)
@@ -27,7 +26,6 @@ module Juixe
 
       end
 
-      # This module contains instance methods
       module InstanceMethods
 
         def number_of_votes_for
@@ -51,7 +49,6 @@ module Juixe
           Vote.find(:all, :conditions => total_votes_conditions(false))
         end
 
-        # Same as voteable.votes.size
         def votes_count
           self.votes.size
         end
@@ -98,3 +95,15 @@ module Juixe
     end
   end
 end
+
+%w(models).each do |dir|
+
+  path = File.join(File.dirname(__FILE__), 'app', dir)
+  $LOAD_PATH << path
+
+  ActiveSupport::Dependencies.load_paths << path
+  ActiveSupport::Dependencies.load_once_paths.delete(path)
+
+end
+
+ActiveRecord::Base.send :include, Juixe::Acts::Voteable
