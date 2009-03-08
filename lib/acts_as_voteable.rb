@@ -10,21 +10,25 @@ module Juixe
       module ClassMethods
 
         def acts_as_voteable(options = { })
+
           has_many :votes, :as => :voteable, :dependent => options[:dependent] || :delete_all
+
           include Juixe::Acts::Voteable::InstanceMethods
           extend Juixe::Acts::Voteable::SingletonMethods
+
         end
 
       end
 
       module SingletonMethods
 
-        def find_votes_cast_by_user(user)
-          voteable = ActiveRecord::Base.send(:class_name_of_active_record_descendant, self).to_s
-          Vote.find(:all, :conditions => ["user_id = ? and voteable_type = ?", user.id, voteable], :order => "created_at DESC")
+        def find_votes_by_user(user)
+          Vote.find(:all, :conditions => { :voteable_type => voteable_type, :user_id => user.id }, :order => "created_at DESC")
         end
 
         def voteable_type
+          # TODO: Use this ???
+          # ActiveRecord::Base.send(:class_name_of_active_record_descendant, self).to_s
           self.to_s
         end
 

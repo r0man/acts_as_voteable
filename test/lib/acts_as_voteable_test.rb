@@ -149,64 +149,31 @@ class ActsAsVoteableTest < ActiveSupport::TestCase
 
   end
 
+  test "find votes by user" do
 
-  #   test "voted by user" do
-  #     assert !@article.voted_by_user?(@alice)
-  #     @article.vote(2, @alice)
-  #     assert @article.voted_by_user?(@alice)
-  #   end
+    assert_equal [], Article.find_votes_by_user(@alice)
+    assert_equal [], Article.find_votes_by_user(@bob)
 
-  #   test "find ratings for the given voteable" do
+    vote_alice = @article.vote(false, @alice)
+    assert_equal [vote_alice], Article.find_votes_by_user(@alice)
+    assert_equal [], Article.find_votes_by_user(@bob)
 
-  #     other_article = Article.create(:text => "Lorem ipsum dolor sit amet.")
-  #     other_article.vote(4, @alice)
+    vote_alice = @article.vote(true, @alice)
+    assert_equal [vote_alice], Article.find_votes_by_user(@alice)
+    assert_equal [], Article.find_votes_by_user(@bob)
 
-  #     assert_equal [], Article.find_ratings_for(@article)
+    vote_bob = @article.vote(true, @bob)
+    assert_equal [vote_alice], Article.find_votes_by_user(@alice)
+    assert_equal [vote_bob], Article.find_votes_by_user(@bob)
 
-  #     rating_alice = @article.vote(2, @alice)
-  #     assert_equal [rating_alice], Article.find_ratings_for(@article)
+    vote_bob = @article.vote(false, @bob)
+    assert_equal [vote_alice], Article.find_votes_by_user(@alice)
+    assert_equal [vote_bob], Article.find_votes_by_user(@bob)
 
-  #     rating_bob = @article.vote(3, @bob)
-  #     assert_equal [rating_alice, rating_bob], Article.find_ratings_for(@article)
+    vote_unknown = @article.vote(false)
+    assert_equal [vote_alice], Article.find_votes_by_user(@alice)
+    assert_equal [vote_bob], Article.find_votes_by_user(@bob)
 
-  #   end
-
-  #   test "find ratings by user" do
-
-  #     assert_equal [], Article.find_ratings_by_user(@alice)
-
-  #     rating_alice = @article.vote(2, @alice)
-  #     assert_equal [rating_alice], Article.find_ratings_by_user(@alice)
-
-  #     rating_bob = @article.vote(3, @bob)
-  #     assert_equal [rating_bob], Article.find_ratings_by_user(@bob)
-
-  #   end
-
-  #   test "find by rating" do
-
-  #     assert_equal [], Article.find_by_rating(1)
-
-  #     rating_alice = @article.vote(1, @alice)
-  #     assert_equal 1, @article.rating
-  #     assert_equal [@article], Article.find_by_rating(1)
-
-  #     rating_bob = @article.vote(2, @bob)
-  #     assert_equal 1.5, @article.rating
-  #     assert_equal [@article], Article.find_by_rating(2)
-
-  #   end
-
-  #   test "underrating" do
-  #     assert_raise ArgumentError do
-  #       @article.vote(@article.class.rating_definitions[:range].min - 1)
-  #     end
-  #   end
-
-  #   test "overrating" do
-  #     assert_raise ArgumentError do
-  #       @article.vote(@article.class.rating_definitions[:range].max + 1)
-  #     end
-  #   end
+  end
 
 end
