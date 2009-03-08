@@ -11,8 +11,8 @@ class VoteTest < ActiveSupport::TestCase
     @alice = User.create(:name => "alice")
     @bob   = User.create(:name => "bob")
 
-    @vote_alice = Vote.create(:voteable_type => Article.to_s, :voteable_id => @article.id, :user => @alice, :vote => true)
-    @vote_bob   = Vote.create(:voteable_type => Article.to_s, :voteable_id => @article.id, :user => @bob, :vote => false)
+    @vote_alice = Vote.create(:voteable_type => Article.to_s, :voteable_id => @article.id, :user => @alice, :voting => true)
+    @vote_bob   = Vote.create(:voteable_type => Article.to_s, :voteable_id => @article.id, :user => @bob, :voting => false)
 
   end
 
@@ -26,24 +26,22 @@ class VoteTest < ActiveSupport::TestCase
     assert_equal @article, @vote_bob.voteable
   end
 
-  test "vote" do
-    assert_equal true, @vote_alice.vote
-    assert_equal false, @vote_bob.vote
+  test "voting" do
+    assert_equal true, @vote_alice.voting
+    assert_equal false, @vote_bob.voting
+  end
+
+  test "named scope 'against'" do
+    assert Vote.against.include?(@vote_bob)
+  end
+
+  test "named scope 'for'" do
+    assert Vote.for.include?(@vote_alice)
   end
 
   test "find votes by user" do
     assert_equal [@vote_alice], Vote.find_votes_by_user(@alice)
     assert_equal [@vote_bob], Vote.find_votes_by_user(@bob)
-  end
-
-  test "vote normalization" do
-
-    ["1", "for", "true", true].each do |vote_for|
-      @vote_alice.vote = false
-      @vote_alice.vote = vote_for
-      assert @vote_alice.vote
-    end
-
   end
 
 end

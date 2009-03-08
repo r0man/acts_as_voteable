@@ -12,7 +12,7 @@ ActiveRecord::Schema.define(:version => 0) do
     t.string   :voteable_type
     t.integer  :voteable_id
     t.integer  :user_id
-    t.boolean  :vote
+    t.boolean  :voting
     t.datetime :created_at
   end
 

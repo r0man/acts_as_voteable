@@ -6,12 +6,12 @@ class <%= migration_name %> < ActiveRecord::Migration
       t.string   :voteable_type
       t.integer  :voteable_id
       t.integer  :user_id
-      t.boolean  :vote
+      t.boolean  :voting
       t.datetime :created_at
     end
 
     add_index :votes, [:voteable_type, :voteable_id, :user_id]
-    add_index :votes, [:voteable_type, :voteable_id, :vote]
+    add_index :votes, [:voteable_type, :voteable_id, :voting]
 
   end
 

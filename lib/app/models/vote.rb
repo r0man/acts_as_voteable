@@ -3,9 +3,8 @@ class Vote < ActiveRecord::Base
   belongs_to :user
   belongs_to :voteable, :polymorphic => true
 
-  def vote=(vote)
-    self[:vote] = ["true", "for", "1"].include?(vote.to_s)
-  end
+  named_scope :against, :conditions => { :voting => false }
+  named_scope :for,     :conditions => { :voting => true }
 
   class << self
 
