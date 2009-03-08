@@ -21,6 +21,20 @@ class ActsAsVoteableTest < ActiveSupport::TestCase
     assert @article.vote(false).kind_of?(Vote)
   end
 
+  test "vote normalization" do
+
+    ["1", "true", true, "for"].each do |voting|
+      vote = @article.vote(voting, @alice)
+      assert vote.vote
+    end
+
+    ["0", "false", false, "against"].each do |voting|
+      vote = @article.vote(voting, @alice)
+      assert !vote.vote
+    end
+
+  end
+
   test "number of votes against" do
 
     @article.vote(true, @alice)
