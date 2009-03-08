@@ -24,42 +24,40 @@ module Juixe
           Vote.find(:all, :conditions => ["user_id = ? and voteable_type = ?", user.id, voteable], :order => "created_at DESC")
         end
 
+        def voteable_type
+          self.to_s
+        end
+
       end
 
       module InstanceMethods
 
-        def number_of_votes_for
-          Vote.count(:conditions => total_votes_conditions(true))
+        def number_of_votes(options = { })
+          Vote.count(:conditions => voteable_conditions.merge(options))
         end
 
-        def number_of_votes_against
-          Vote.count(:conditions => total_votes_conditions(false))
+        def number_of_votes_against(options = { })
+          number_of_votes options.merge(:vote => false)
+        end
+
+        def number_of_votes_for(options = { })
+          number_of_votes options.merge(:vote => true)
         end
 
         def vote(voting, user = nil)
-          delete_previous_votes(user)
-          create_vote(voting, user)
-        end
-
-        def votes_for
-          Vote.find(:all, :conditions => total_votes_conditions(true))
+          delete_votes_by_user(user)
+          votes.create(:vote => voting, :user => user)
         end
 
         def votes_against
-          Vote.find(:all, :conditions => total_votes_conditions(false))
+          Vote.find(:all, :conditions => voteable_conditions.merge(:vote => false))
         end
 
-        def votes_count
-          self.votes.size
+        def votes_for
+          Vote.find(:all, :conditions => voteable_conditions.merge(:vote => true))
         end
 
-        def users_who_voted
-          users = []
-          self.votes.each { |v| users << v.user }
-          users
-        end
-
-        def voted_by_user?(user)
+        def voted_by?(user)
           rtn = false
           if user
             self.votes.each { |v| rtn = true if user.id == v.user_id }
@@ -67,28 +65,23 @@ module Juixe
           rtn
         end
 
+        def voters
+          self.votes.collect { |vote| vote.user }
+        end
+
         protected
 
-        def build_vote(voting, user = nil)
-          votes.build(:vote => normalize_voting(voting), :user => user)
+        def delete_votes_by_user(user)
+
+          if user
+            Vote.delete_all(voteable_conditions.merge(:user_id => user.id))
+            reload
+          end
+
         end
 
-        def create_vote(voting, user = nil)
-          vote = build_vote(voting, user)
-          vote.save
-          vote
-        end
-
-        def normalize_voting(voting)
-          ["true", "for", "1"].include?(voting.to_s)
-        end
-
-        def delete_previous_votes(user)
-          ::Vote.delete_all(["voteable_type = ? AND voteable_id = ? AND user_id = ?", self.class.to_s, self.id, user.id]) unless user.blank?
-        end
-
-        def total_votes_conditions(vote)
-          ["voteable_id = ? AND voteable_type = ? AND vote = ?", id, self.class.to_s, vote]
+        def voteable_conditions
+          { :voteable_type => self.class.voteable_type, :voteable_id => self.id }
         end
 
       end
