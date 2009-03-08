@@ -27,8 +27,6 @@ module Juixe
         end
 
         def voteable_type
-          # TODO: Use this ???
-          # ActiveRecord::Base.send(:class_name_of_active_record_descendant, self).to_s
           self.to_s
         end
 
@@ -36,29 +34,29 @@ module Juixe
 
       module InstanceMethods
 
-        def number_of_votes(options = { })
-          Vote.count(:conditions => voteable_conditions.merge(options))
+        def number_of_votes
+          votes.size
         end
 
-        def number_of_votes_against(options = { })
-          number_of_votes options.merge(:vote => false)
+        def number_of_votes_against
+          votes.against.size
         end
 
-        def number_of_votes_for(options = { })
-          number_of_votes options.merge(:vote => true)
+        def number_of_votes_for
+          votes.for.size
         end
 
         def vote(voting, user = nil)
           delete_votes_by_user(user)
-          votes.create(:vote => voting, :user => user)
+          votes.create(:voting => normalize_voting(voting), :user => user)
         end
 
         def votes_against
-          Vote.find(:all, :conditions => voteable_conditions.merge(:vote => false))
+          votes.against
         end
 
         def votes_for
-          Vote.find(:all, :conditions => voteable_conditions.merge(:vote => true))
+          votes.for
         end
 
         def voted_by?(user)
@@ -82,6 +80,10 @@ module Juixe
             reload
           end
 
+        end
+
+        def normalize_voting(voting)
+          ["true", "1", "for"].include?(voting.to_s)
         end
 
         def voteable_conditions

@@ -10,15 +10,52 @@ class ActsAsVoteableTest < ActiveSupport::TestCase
     @alice, @bob = User.create(:name => "alice"), User.create(:name => "bob")
   end
 
-  test "voteable type" do
+  test "should return the class name as the voteable type" do
     assert_equal "Article", Article.voteable_type
   end
 
-  test "vote" do
+  test "vote should return kind of a Vote" do
     assert @article.vote(true, @alice).kind_of?(Vote)
-    assert @article.vote(false, @alice).kind_of?(Vote)
-    assert @article.vote(true).kind_of?(Vote)
-    assert @article.vote(false).kind_of?(Vote)
+  end
+
+  test "voting with 'true' should return positive voting" do
+    assert @article.vote(true, @alice).voting
+  end
+
+  test "voting with '1' should return positive voting" do
+    assert @article.vote("1", @alice).voting
+  end
+
+  test "voting with 'for' should return positive voting" do
+    assert @article.vote("for", @alice).voting
+  end
+
+  test "voting with 'false' should return a negative voting" do
+    assert !@article.vote(false, @alice).voting
+  end
+
+  test "voting with '0' should return a negative voting" do
+    assert !@article.vote("0", @alice).voting
+  end
+
+  test "voting with 'against' should return a negative voting" do
+    assert !@article.vote("against", @alice).voting
+  end
+
+  test "voting twice with 'false' should count as one vote" do
+    assert_equal 0, Article.find_votes_by_user(@alice).size
+    @article.vote(false, @alice)
+    assert_equal 1, Article.find_votes_by_user(@alice).size
+    @article.vote(false, @alice)
+    assert_equal 1, Article.find_votes_by_user(@alice).size
+  end
+
+  test "voting twice with 'true' and 'false' should count as one vote" do
+    assert_equal 0, Article.find_votes_by_user(@alice).size
+    @article.vote(true, @alice)
+    assert_equal 1, Article.find_votes_by_user(@alice).size
+    @article.vote(false, @alice)
+    assert_equal 1, Article.find_votes_by_user(@alice).size
   end
 
   test "number of votes against" do

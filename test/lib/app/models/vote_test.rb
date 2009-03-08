@@ -6,6 +6,8 @@ class VoteTest < ActiveSupport::TestCase
 
   def setup
 
+    Vote.delete_all
+
     @article = Article.create(:text => "Lorem ipsum dolor sit amet.")
 
     @alice = User.create(:name => "alice")
@@ -32,10 +34,12 @@ class VoteTest < ActiveSupport::TestCase
   end
 
   test "named scope 'against'" do
+    assert_equal 1, Vote.against.size
     assert Vote.against.include?(@vote_bob)
   end
 
   test "named scope 'for'" do
+    assert_equal 1, Vote.for.size
     assert Vote.for.include?(@vote_alice)
   end
 
