@@ -30,10 +30,10 @@ Make your model voteable:
       alice, bob = User.create(:name => "alice"), User.create(:name => "bob")
 
       article.vote(true, alice)
-      article.votes_for # => 1
+      article.number_of_votes_for # => 1
 
       article.vote(false, bob)
-      article.votes_against # => 1
+      article.number_of_votes_against # => 1
 
 Look at the tests to see more examples...
 
