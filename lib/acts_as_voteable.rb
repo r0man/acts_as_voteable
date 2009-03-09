@@ -106,3 +106,4 @@ end
 end
 
 ActiveRecord::Base.send :include, Juixe::Acts::Voteable
+require File.join(File.dirname(__FILE__), 'app', 'models', 'vote')
